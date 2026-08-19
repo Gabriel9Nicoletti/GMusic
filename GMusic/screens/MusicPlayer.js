@@ -17,3 +17,10 @@ export default function MusicPlayer(){
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        background
+    }
+})
