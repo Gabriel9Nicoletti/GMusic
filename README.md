@@ -1,2 +1,2 @@
 # GMusic
-Aplicação Mobile React Native Exppo, para reprodução de audio
+Aplicação Mobile React Native Expo, para reprodução de áudios
