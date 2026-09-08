@@ -77,7 +77,7 @@ export default function MusicPlayer() {
   function handleMomentumEnd(event) {
     const offset = event.nativeEvent.contentOffset.x;
     const index = Math.round(offset / width);
-    setSelectedIndex(index);
+    selectSong(index);
   }
 
   function renderArtwork({ item }) {
