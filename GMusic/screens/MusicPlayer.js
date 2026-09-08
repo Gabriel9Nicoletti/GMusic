@@ -23,6 +23,25 @@ const audioSources = songs.map((song) => song.url);
 export default function MusicPlayer() {
   const { width } = useWindowDimensions();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  
+  const playlist = useAudioPlaylist(playlistOptions);
+  const status = useAudioPlaylistStatus(playlist);
+  const [favoriteIds, setFavoriteIds] = useState(() => new Set());
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [seekPosition, setSeekPosition] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const currentSong = songs[selectedIndex];
+  const isFavorite = favoriteIds.has(currentSong.id);
+  const isCompact = height < 700;
+  const contentWidth = Math.min(Math.max(width - 40, 240), 260);
+  const artworkSize = Math.min(
+    contentWidth,
+    Math.max(isCompact ? 190: 240,
+      height * (isCompact ? 0.24 : 0.4)),
+      402
+    );
+
 
   const playlistOptions = useMemo(
     () => ({
@@ -31,12 +50,7 @@ export default function MusicPlayer() {
       updateInterval: 250,
     })
   );
-
-  const playlist = useAudioPlaylist(playlistOptions);
-  const status = useAudioPlaylistStatus(playlist);
-
-  const currentSong = songs[selectedIndex];
-  const artworkSize = Math.min(width-40, 380);
+  
 
   useEffect(() => {
     setAudioModeAsync({
@@ -51,6 +65,10 @@ export default function MusicPlayer() {
       setSelectedIndex(status.currentIndex);
     }
   }, [status.currentIndex]);
+  playlist.loop = repeatOne ? 'single'  : 'none';
+  useEffect(() => {
+
+  }, [playlist, repeatOne]);
 
   function selectSong(index) {
     if (index < 0 || index >= songs.length || index === selectedIndex) {
