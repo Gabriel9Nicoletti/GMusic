@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
   setAudioModeAsync,
@@ -15,33 +15,14 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { songs } from '../model/data';
+import songs from '../model/data';
 import colors from '../theme/colors';
 
 const audioSources = songs.map((song) => song.url);
 
 export default function MusicPlayer() {
-  const { width } = useWindowDimensions();
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  
-  const playlist = useAudioPlaylist(playlistOptions);
-  const status = useAudioPlaylistStatus(playlist);
-  const [favoriteIds, setFavoriteIds] = useState(() => new Set());
-  const [isSeeking, setIsSeeking] = useState(false);
-  const [seekPosition, setSeekPosition] = useState(0);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const currentSong = songs[selectedIndex];
-  const isFavorite = favoriteIds.has(currentSong.id);
-  const isCompact = height < 700;
-  const contentWidth = Math.min(Math.max(width - 40, 240), 260);
-  const artworkSize = Math.min(
-    contentWidth,
-    Math.max(isCompact ? 190: 240,
-      height * (isCompact ? 0.24 : 0.4)),
-      402
-    );
-
+  const { height, width } = useWindowDimensions();
+  const listRef = useRef(null);
 
   const playlistOptions = useMemo(
     () => ({
@@ -50,7 +31,28 @@ export default function MusicPlayer() {
       updateInterval: 250,
     })
   );
-  
+
+  const playlist = useAudioPlaylist(playlistOptions);
+  const status = useAudioPlaylistStatus(playlist);
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [favoriteIds, setFavoriteIds] = useState(() => new Set());
+  const [repeatOne, setRepeatOne] = useState(false);
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [seekPosition, setSeekPosition] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const currentSong = songs[selectedIndex];
+  const isFavorite = favoriteIds.has(currentSong.id);
+  const isCompact = height < 700;
+  const contentWidth = Math.min(Math.max(width - 40, 240), 460);
+  const artworkSize = Math.min(
+    contentWidth,
+    Math.max(isCompact ? 190: 240,
+      height * (isCompact ? 0.34 : 0.4)),
+      420
+  );
+
 
   useEffect(() => {
     setAudioModeAsync({
@@ -65,9 +67,9 @@ export default function MusicPlayer() {
       setSelectedIndex(status.currentIndex);
     }
   }, [status.currentIndex]);
-  playlist.loop = repeatOne ? 'single'  : 'none';
-  useEffect(() => {
 
+  useEffect(() => {
+    playlist.loop = repeatOne ? 'single' : 'none';
   }, [playlist, repeatOne]);
 
   function selectSong(index) {
@@ -113,12 +115,12 @@ export default function MusicPlayer() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.eyebrow}>TOCANDO AGORA</Text>
         <Text style={styles.counter}>
           {selectedIndex + 1} de {songs.length}
         </Text>
-      </View>
+      </View> */}
 
       <FlatList 
         data={songs}
@@ -134,6 +136,19 @@ export default function MusicPlayer() {
         <Text style={styles.songTitle}>{currentSong.title}</Text>
         <Text style={styles.songArtist}>{currentSong.artist}</Text>
       </View>
+
+      <Pressable
+        disabled={!status.isLoaded}
+        onPress={handlePlayPause}
+        style={styles.playButton}
+      >
+        <Ionicons 
+          name={status.playing ? 'pause' : 'play'}
+          size={38}
+          color={colors.background}
+        />
+      </Pressable>
+
     </SafeAreaView>
   )
 }
@@ -141,7 +156,9 @@ export default function MusicPlayer() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
     backgroundColor: colors.background,
+    paddingBottom: 28
   },
   header: {
     height: 70,
@@ -199,5 +216,13 @@ const styles = StyleSheet.create({
     marginTop: 6,
     color: colors.textSecondary,
     fontSize: 14,
+  },
+  playButton: {
+    width: 78,
+    height: 78,
+    borderRadius: 39,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
   }
 })
