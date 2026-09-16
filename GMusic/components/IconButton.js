@@ -66,4 +66,10 @@ export default function IconButton({
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,  
+  }
+})
