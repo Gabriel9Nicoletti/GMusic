@@ -1,8 +1,7 @@
-import React from 'react'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { StyleSheet, ActivityIndicator, Pressable } from 'react-native'
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
-import colors from '../theme/colors'
+import colors from '../theme/colors';
 
 const VARIANTS = {
   ghost: {
@@ -19,8 +18,8 @@ const VARIANTS = {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
     iconColor: colors.background,
-  }
-}
+  },
+};
 
 export default function IconButton({
   accessibilityLabel,
@@ -39,7 +38,7 @@ export default function IconButton({
   return (
     <Pressable
       accessibilityLabel={accessibilityLabel}
-      accessibilityRole='button'
+      accessibilityRole="button"
       accessibilityState={{ disabled, selected: active }}
       disabled={disabled || loading}
       hitSlop={10}
@@ -54,7 +53,7 @@ export default function IconButton({
           borderColor: active ? colors.primary : selectedVariant.borderColor,
           opacity: disabled ? 0.42 : pressed ? 0.72 : 1,
           transform: [{ scale: pressed ? 0.96 : 1 }],
-        }
+        },
       ]}
     >
       {loading ? (
@@ -63,13 +62,13 @@ export default function IconButton({
         <Ionicons name={icon} size={iconSize} color={iconColor} />
       )}
     </Pressable>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,  
-  }
-})
+    borderWidth: 1,
+  },
+});
